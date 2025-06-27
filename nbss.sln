@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36121.58 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nbss", "nbss\nbss.csproj", "{21D5C847-4083-2DCB-B587-F1FDE66CDEA4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{21D5C847-4083-2DCB-B587-F1FDE66CDEA4}.Debug|x64.ActiveCfg = Debug|x64
+		{21D5C847-4083-2DCB-B587-F1FDE66CDEA4}.Debug|x64.Build.0 = Debug|x64
+		{21D5C847-4083-2DCB-B587-F1FDE66CDEA4}.Release|x64.ActiveCfg = Release|x64
+		{21D5C847-4083-2DCB-B587-F1FDE66CDEA4}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5B069560-6A07-4637-8539-860E35D150E7}
+	EndGlobalSection
+EndGlobal
