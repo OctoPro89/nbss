@@ -27,6 +27,7 @@
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                     <Button Click="OnGetMylistButton_Click" Margin="10,0,10,0" Content="Get My list" Style="{StaticResource QuartzButtonStyle}"></Button>
                     <Button Click="OnCreateTorrentButton_Click" Margin="10,0,10,0" Content="Create Torrent" Style="{StaticResource QuartzButtonStyle}"></Button>
+                    <Button Click="OnSetApiKeyButton_Click" Margin="10,0,10,0" Content="Set API Key" Style="{StaticResource QuartzButtonStyle}"></Button>
                 </StackPanel>
             </Grid>
 
@@ -131,8 +132,8 @@
                                 </Button.Style>
                             </Button>
 
-                            <Button Content="Get Torrent Link" Grid.Column="0" Grid.Row="1"
-                                    Click="OnGetTorrentDownloadLink_Click" HorizontalAlignment="Center"
+                            <Button Content="Download All" Grid.Column="0" Grid.Row="1"
+                                    Click="OnDownloadAll_Click" HorizontalAlignment="Center"
                                     Margin="10,5,0,0" Width="150">
                                 <Button.Style>
                                     <Style BasedOn="{StaticResource QuartzButtonStyle}" TargetType="Button">

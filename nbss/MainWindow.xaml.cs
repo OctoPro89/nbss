@@ -32,7 +32,7 @@ namespace nbss
                     }
                 }
 
-                TorboxAPI.InitWithAPIKey(apiKey);
+                TorboxAPI.SetAPIKey(apiKey);
             };
         }
     }

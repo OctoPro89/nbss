@@ -14,7 +14,7 @@ namespace nbss
         private static HttpClient _httpClient = new();
         private static string _apiKey = "";
 
-        public static void InitWithAPIKey(string apiKey)
+        public static void SetAPIKey(string apiKey)
         {
             _apiKey = apiKey;
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);

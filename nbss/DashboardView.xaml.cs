@@ -1,5 +1,9 @@
 ﻿using nbss.Player;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -89,21 +93,64 @@ namespace nbss
             }
         }
 
-        private async void OnGetTorrentDownloadLink_Click(object sender, RoutedEventArgs e)
+        private string GetFileName(HttpResponseMessage response, string url)
+        {
+            if (response.Content.Headers.ContentDisposition?.FileName != null)
+            {
+                return response.Content.Headers.ContentDisposition.FileName.Trim('"');
+            }
+
+            return Path.GetFileName(new Uri(url).LocalPath);
+        }
+
+        private async Task DownloadFilesSequentiallyAsync(List<string> urls, string outputFolder)
+        {
+            using var httpClient = new HttpClient();
+
+            foreach (var url in urls)
+            {
+                try
+                {
+                    resultText.Text = $"Downloading: {url}";
+
+                    using var response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+                    response.EnsureSuccessStatusCode();
+
+                    // Try to get filename from headers, fallback if needed
+                    var fileName = GetFileName(response, url);
+                    var filePath = Path.Combine(outputFolder, fileName);
+
+                    using var stream = await response.Content.ReadAsStreamAsync();
+                    using var fileStream = File.Create(filePath);
+
+                    await stream.CopyToAsync(fileStream);
+
+                    resultText.Text = $"Finished: {fileName}";
+                }
+                catch (Exception ex)
+                {
+                    resultText.Text = $"Failed: {url}";
+                }
+            }
+        }
+
+        private async void OnDownloadAll_Click(object sender, RoutedEventArgs e)
         {
             if (DataContext is Dashboard vm && vm.SelectedTorrent != null)
             {
-                RequestDirectDownloadLinkResponse response = await TorboxAPI.RequestTorrentDownloadLinkAsync($"{vm.SelectedTorrent.Id}", false);
+                List<string> urls = new List<string>();
+                for (int i = 0; i < vm.SelectedTorrent.Files.Count; ++i)
+                {
+                    RequestDirectDownloadLinkResponse response = await TorboxAPI.RequestDownloadLinkAsync($"{vm.SelectedTorrent.Id}", $"{vm.SelectedTorrent.Files[i].Id}");
+                    if (response.Error != null)
+                    {
+                        resultText.Text = $"Failed to get torrent direct download link with error: {response.Error}'";
+                        continue;
+                    }
+                    urls.Add(response.ContentURL);
+                }
 
-                if (response.Error != null)
-                {
-                    resultText.Text = $"Failed to get torrent direct download link with error: {response.Error}'";
-                }
-                else
-                {
-                    Clipboard.SetText(response.ContentURL);
-                    resultText.Text = "Torrent direct download link copied to clipboard.";
-                }
+                await DownloadFilesSequentiallyAsync(urls, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads"));
             }
         }
 
@@ -119,6 +166,7 @@ namespace nbss
                 else
                 {
                     resultText.Text = "Torrent removed from account successfully, click 'Get Mylist' to refresh.";
+                    vm.Torrents.RemoveAt(torrentsListBox.SelectedIndex);
                 }
             }
         }
@@ -136,6 +184,18 @@ namespace nbss
                 {
                     filesListBox.ItemsSource = vm.SelectedTorrent.Files;
                 }
+            }
+        }
+
+        private void OnSetApiKeyButton_Click(object sender, RoutedEventArgs e)
+        {
+            APIKeyDialog prompt = new APIKeyDialog();
+            if (prompt.ShowDialog() == true)
+            {
+                string apiKey = prompt.APIKey;
+                Properties.Settings.Default.APIKey = apiKey;
+                Properties.Settings.Default.Save();
+                TorboxAPI.SetAPIKey(apiKey);
             }
         }
     }
